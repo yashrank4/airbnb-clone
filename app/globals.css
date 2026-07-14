@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+/* Airbnb Cereal — self-hosted variable font (from /public/fonts). */
+@font-face {
+  font-family: "Airbnb Cereal VF";
+  src: url(/fonts/AirbnbCerealVF.woff2) format("woff2-variations");
+  font-weight: 200 900;
+  font-display: swap;
+}
+
+/* ============================================================
+   Airbnb clone design tokens (LOCKED — from airbnb-tokens skill).
+   Reference every value from here; nothing hardcoded in components.
+   ============================================================ */
+:root {
+  /* Layout */
+  --page-max: 1280px;
+  --gutter: 80px;
+  --grid-gap: 8px;
+  --radius-img: 12px;
+  --booking-sticky-top: 100px;
+  --header-h: 88px;
+
+  /* Color */
+  --fg: #222222;
+  --fg-secondary: #6a6a6a;
+  --border: #ebebeb;
+  --border-strong: #b0b0b0;
+  --bg: #ffffff;
+  --bg-subtle: #f2f2f2;
+  --rausch: #ff385c;
+  --rausch-dark: #e00b41;
+  --claim-green: #0a7d33;
+  --overlay: rgba(0, 0, 0, 0.92);
+  --shadow-card: 0 6px 16px rgba(0, 0, 0, 0.12);
+
+  /* Font stack: Airbnb Cereal (self-hosted @font-face above), falling back to
+     Inter / system sans if it fails to load. */
+  --font-sans: "Airbnb Cereal VF", Inter, -apple-system, "Helvetica Neue",
+    sans-serif;
+
+  /* ---- Reference token set (provided verbatim) ----------------------
+     Some overlap with the tokens above; kept as named aliases so component
+     code can use either name. Distinct additions: the reserve gradients,
+     the soft/grey scale, and the hover shadow. */
+  --ink: #222222;
+  /* == --fg */
+  --muted: #6a6a6a;
+  /* == --fg-secondary */
+  --muted2: #717171;
+  --line: #dddddd;
+  /* == --border */
+  --line-soft: #ebebeb;
+  --card-border: rgba(0, 0, 0, 0.08);
+  --reserve: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);
+  --reserve-hover: linear-gradient(to right, #d81b5f 0%, #c31a5b 50%, #bd0463 100%);
+  --grey100: #f7f7f7;
+  --grey200: #f2f2f2;
+  --grey300: #ebebeb;
+  --container: 1280px;
+  /* == --page-max */
+  --font: "Airbnb Cereal VF", Circular, -apple-system, BlinkMacSystemFont,
+    "system-ui", Roboto, "Helvetica Neue", sans-serif;
+  --shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* All buttons (and button-role elements) are clickable. Tailwind's Preflight
+   sets cursor:default on buttons; this restores the pointer globally so we
+   don't repeat cursor-pointer on every component. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+
+/* Expose tokens to Tailwind's theme so utilities can reference them. */
+@theme inline {
+  --color-fg: var(--fg);
+  --color-fg-secondary: var(--fg-secondary);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-bg: var(--bg);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-rausch: var(--rausch);
+  --color-rausch-dark: var(--rausch-dark);
+  --color-claim-green: var(--claim-green);
+  --font-sans: var(--font-sans);
+}
+
+html {
+  font-family: var(--font-sans);
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 22px;
+  -webkit-font-smoothing: antialiased;
+}
