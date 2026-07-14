@@ -80,7 +80,7 @@ export default function Lightbox({
               type="button"
               aria-label="Back to all photos"
               onClick={onReturnToGrid}
-              className="flex h-10 w-10 items-center justify-center rounded-full text-[var(--fg)] transition-colors hover:bg-[var(--bg-subtle)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fg)]"
+              className="flex h-10 w-10 items-center justify-center rounded-full text-[var(--fg)] transition-colors hover:bg-[var(--bg-subtle)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fg)] active:scale-95"
             >
               <Icon name="dot-grid" className="h-5 w-5" />
             </button>
@@ -98,7 +98,7 @@ export default function Lightbox({
                 type="button"
                 aria-label="Close photo"
                 onClick={onReturnToGrid}
-                className="flex h-10 w-10 items-center justify-center rounded-full text-[var(--fg)] transition-colors hover:bg-[var(--bg-subtle)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fg)]"
+                className="flex h-10 w-10 items-center justify-center rounded-full text-[var(--fg)] transition-colors hover:bg-[var(--bg-subtle)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fg)] active:scale-95"
               >
                 <Icon name="cross" className="h-4 w-4" />
               </button>

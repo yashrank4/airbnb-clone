@@ -271,7 +271,8 @@ export default function PhotoTour({
             type="button"
             aria-label="Close photo tour"
             onClick={onClose}
-            className="ml-[-8px] flex h-10 w-10 items-center justify-center rounded-full text-[var(--fg)] transition-colors duration-150 hover:bg-[var(--bg-subtle)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--fg)]"
+            className="ml-[-8px] flex h-10 w-10 items-center justify-center rounded-full text-[var(--fg)] transition-colors duration-150 hover:bg-[var(--bg-subtle)] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--fg)] "
+       
           >
             <Icon name="chev-left" className="h-[18px] w-[18px]" />
           </button>
