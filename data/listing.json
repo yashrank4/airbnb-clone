@@ -709,52 +709,52 @@
     {
       "label": "Comfort",
       "count": 6,
-      "icon": "home"
+      "image": "/images/comfort.png"
     },
     {
       "label": "Accuracy",
       "count": 5,
-      "icon": "check-circle"
+      "image": "/images/accuracy.png"
     },
     {
       "label": "Hot tub",
       "count": 5,
-      "icon": "jacuzzi"
+      "image": "/images/hot-tub.png"
     },
     {
       "label": "Condition",
       "count": 4,
-      "icon": "shield"
+      "image": "/images/condition.png"
     },
     {
       "label": "Hospitality",
       "count": 8,
-      "icon": "heart"
+      "image": "/images/hospitality.png"
     },
     {
       "label": "Cleanliness",
       "count": 4,
-      "icon": "spray-bottle"
+      "image": "/images/cleanliness.png"
     },
     {
       "label": "Amenities",
       "count": 2,
-      "icon": "snowflake"
+      "image": "/images/amenities.png"
     },
     {
       "label": "Decor",
       "count": 2,
-      "icon": "flower"
+      "image": "/images/decor.png"
     },
     {
       "label": "Indoor spaces",
       "count": 2,
-      "icon": "door"
+      "image": "/images/indoor-spaces.png"
     },
     {
       "label": "Location",
       "count": 2,
-      "icon": "map"
+      "image": "/images/location.png"
     }
   ],
   "nearbyStays": [

@@ -127,7 +127,7 @@ export interface Price {
   export interface ReviewTag {
 	label: string; // "Comfort"
 	count: number; // 6
-	icon: string; // Icon name (see components/Icon.tsx)
+	image: string; // path to chip image under /public (e.g. "/images/comfort.png")
   }
 
   // A card in the "More stays nearby" carousel at the foot of the page.

@@ -33,8 +33,25 @@ function Avatar({ name, src }: { name: string; src?: string }) {
     );
   }
 
+  const PALETTE = [
+    ["bg-green-100", "text-green-600"],
+    ["bg-red-100", "text-red-600"],
+    ["bg-blue-100", "text-blue-600"],
+    ["bg-yellow-100", "text-yellow-700"],
+    ["bg-purple-100", "text-purple-600"],
+    ["bg-pink-100", "text-pink-600"],
+    ["bg-teal-100", "text-teal-600"],
+    ["bg-orange-100", "text-orange-600"],
+    ["bg-cyan-100", "text-cyan-600"],
+    ["bg-emerald-100", "text-emerald-600"],
+    ["bg-lime-100", "text-lime-600"],
+    ["bg-rose-100", "text-rose-600"],
+  ];
+
+  let randomIndex = Math.floor(Math.random() * PALETTE.length);
+  const [bgColor, textColor] = PALETTE[randomIndex];
   return (
-    <div className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-[#dddddd] text-[17px] font-medium text-[var(--fg)]">
+    <div className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full ${bgColor} ${textColor} text-[17px] font-medium`}>
       {name.charAt(0).toUpperCase()}
     </div>
   );
@@ -143,13 +160,14 @@ export default function Reviews() {
       </div>
 
       {/* Overall rating + category breakdown */}
-      <div className="mt-6 grid grid-cols-[repeat(7,minmax(0,1fr))] divide-x divide-[var(--border)]">
+      <div className="mt-6 grid grid-cols-[1.4fr_repeat(6,1fr)] divide-x divide-[var(--border)]">
+ 
         {/* Overall rating with distribution bars */}
-        <div className="pr-6">
+        <div className="px-6">
           <p className="mb-3 text-[14px] font-medium leading-[18px] text-[var(--fg)]">
             Overall rating
           </p>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             {distribution.map((row) => (
               <div key={row.star} className="flex items-center gap-2">
                 <span className="w-2 text-[12px] leading-none text-[var(--fg)]">
@@ -169,13 +187,13 @@ export default function Reviews() {
         {/* Six category columns — label + score at top, icon below. */}
         {CATEGORY_ROWS.map(({ key, label, icon }) => (
           <div key={label} className="flex flex-col px-6">
-            <p className="text-[14px] font-medium leading-[18px] text-[var(--fg)]">
+            <p className="pb-3 text-[14px] font-medium leading-[18px] text-[var(--fg)]">
               {label}
             </p>
-            <p className="mt-1 text-[16px] font-semibold text-[var(--fg)]">
+            <p className="pb-2 text-[16px] font-semibold text-[var(--fg)]">
               {categories[key].toFixed(1)}
             </p>
-            <span className="mt-3 text-[var(--fg)]">
+            <span className="text-[var(--fg)]">
               <Icon name={icon} className="h-8 w-8" />
             </span>
           </div>
@@ -184,7 +202,7 @@ export default function Reviews() {
 
       {/* Review keyword chips — a single row that scrolls horizontally. Each is
           a rounded card: icon + keyword + mention count. */}
-      <div className="mt-8 flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="mt-10 flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {reviewTags.map((tag) => (
           <button
             key={tag.label}
@@ -192,7 +210,12 @@ export default function Reviews() {
             aria-label={`${tag.label}, ${tag.count} mentions`}
             className="flex shrink-0 items-center gap-2 rounded-2xl border border-[var(--border)] px-4 py-3 text-[15px] font-normal text-[var(--fg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--fg)]"
           >
-            <Icon name={tag.icon as IconName} className="h-5 w-5 shrink-0" />
+            <img
+              src={tag.image}
+              alt=""
+              aria-hidden="true"
+              className="h-5 w-5 shrink-0"
+            />
             {tag.label}
             <span className="text-[var(--fg-secondary)]">{tag.count}</span>
           </button>
