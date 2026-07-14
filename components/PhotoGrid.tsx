@@ -185,7 +185,7 @@ export default function PhotoGrid({ onOpenPhotoTour }: PhotoGridProps) {
         onClick={() => onOpenPhotoTour()}
         aria-label={`Show all ${totalPhotos} photos`}
         aria-haspopup="dialog"
-        className="absolute bottom-6 right-6 flex h-8 items-center gap-2 rounded-lg border border-[var(--fg)] bg-[var(--bg)] px-[15px] py-[7px] text-[12px] font-semibold text-[var(--fg)] shadow-[var(--shadow-card)] transition-colors duration-200 hover:bg-[var(--bg-subtle)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--fg)]"
+        className="absolute bottom-6 right-6 flex h-8 items-center gap-2 rounded-lg border border-[var(--fg)] bg-[var(--bg)] px-[15px] py-[7px] text-[12px] font-semibold text-[var(--fg)] shadow-[var(--shadow-card)] transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--bg-subtle)] active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--fg)]"
       >
         <DotGridIcon />
         Show all photos

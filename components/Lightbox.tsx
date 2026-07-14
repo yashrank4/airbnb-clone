@@ -58,7 +58,7 @@ export default function Lightbox({
   });
 
   const arrowClass =
-    "flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--bg)] text-[var(--fg)] transition-colors hover:bg-[var(--bg-subtle)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fg)]";
+    "flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--bg)] text-[var(--fg)] transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--bg-subtle)] active:scale-[0.92] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fg)]";
 
   return (
     <AnimatePresence>

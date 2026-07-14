@@ -20,6 +20,29 @@ const CATEGORY_ROWS: {
   { key: "value", label: "Value", icon: "tag" },
 ];
 
+const AVATAR_PALETTE = [
+  ["bg-green-100", "text-green-600"],
+  ["bg-red-100", "text-red-600"],
+  ["bg-blue-100", "text-blue-600"],
+  ["bg-yellow-100", "text-yellow-700"],
+  ["bg-purple-100", "text-purple-600"],
+  ["bg-pink-100", "text-pink-600"],
+  ["bg-teal-100", "text-teal-600"],
+  ["bg-orange-100", "text-orange-600"],
+  ["bg-cyan-100", "text-cyan-600"],
+  ["bg-emerald-100", "text-emerald-600"],
+  ["bg-lime-100", "text-lime-600"],
+  ["bg-rose-100", "text-rose-600"],
+] as const;
+
+function colorForName(name: string) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash * 31 + name.charCodeAt(i)) | 0;
+  }
+  return AVATAR_PALETTE[Math.abs(hash) % AVATAR_PALETTE.length];
+}
+
 function Avatar({ name, src }: { name: string; src?: string }) {
   if (src) {
     return (
@@ -33,25 +56,12 @@ function Avatar({ name, src }: { name: string; src?: string }) {
     );
   }
 
-  const PALETTE = [
-    ["bg-green-100", "text-green-600"],
-    ["bg-red-100", "text-red-600"],
-    ["bg-blue-100", "text-blue-600"],
-    ["bg-yellow-100", "text-yellow-700"],
-    ["bg-purple-100", "text-purple-600"],
-    ["bg-pink-100", "text-pink-600"],
-    ["bg-teal-100", "text-teal-600"],
-    ["bg-orange-100", "text-orange-600"],
-    ["bg-cyan-100", "text-cyan-600"],
-    ["bg-emerald-100", "text-emerald-600"],
-    ["bg-lime-100", "text-lime-600"],
-    ["bg-rose-100", "text-rose-600"],
-  ];
+  const [bgColor, textColor] = colorForName(name);
 
-  let randomIndex = Math.floor(Math.random() * PALETTE.length);
-  const [bgColor, textColor] = PALETTE[randomIndex];
   return (
-    <div className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full ${bgColor} ${textColor} text-[17px] font-medium`}>
+    <div
+      className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full ${bgColor} ${textColor} text-[17px] font-medium`}
+    >
       {name.charAt(0).toUpperCase()}
     </div>
   );

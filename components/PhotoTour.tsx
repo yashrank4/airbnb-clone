@@ -388,7 +388,7 @@ export default function PhotoTour({
                                 type="button"
                                 onClick={() => openLightbox(globalIndex)}
                                 aria-label={`${listing.title} image ${globalIndex + 1}`}
-                                className="relative block aspect-[3/2] w-full overflow-hidden rounded-lg bg-[var(--bg-subtle)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--fg)]"
+                                className="group relative block aspect-[3/2] w-full overflow-hidden rounded-lg bg-[var(--bg-subtle)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--fg)]"
                               >
                                 <Image
                                   src={url}
@@ -399,7 +399,11 @@ export default function PhotoTour({
                                       ? "(min-width: 768px) 250px, 50vw"
                                       : "(min-width: 768px) 500px, 100vw"
                                   }
-                                  className="object-cover"
+                                  className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+                                />
+                                <span
+                                  aria-hidden="true"
+                                  className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-300 ease-out group-hover:bg-black/[0.1]"
                                 />
                               </button>
                             );
