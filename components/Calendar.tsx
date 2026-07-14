@@ -92,14 +92,17 @@ function addMonths(year: number, month: number, delta: number) {
 function KeyboardIcon() {
   return (
     <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
+      viewBox="0 0 32 22"
+      width="20"
+      height="14"
       aria-hidden="true"
       className="shrink-0"
-      fill="currentColor"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
     >
-      <path d="M1.5 3A1.5 1.5 0 0 0 0 4.5v7A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 14.5 3h-13ZM2 5h1.25v1.25H2V5Zm2.25 0H5.5v1.25H4.25V5ZM6.5 5h1.25v1.25H6.5V5Zm2.25 0H10v1.25H8.75V5ZM11 5h1.25v1.25H11V5Zm2.25 0H14.5v1.25h-1.25V5ZM2 7.25h1.25V8.5H2V7.25Zm2.25 0H5.5V8.5H4.25V7.25ZM6.5 7.25h1.25V8.5H6.5V7.25Zm2.25 0H10V8.5H8.75V7.25ZM11 7.25h1.25V8.5H11V7.25Zm2.25 0H14.5V8.5h-1.25V7.25ZM3.5 9.5h9V10.75h-9V9.5Z" />
+      <rect x="1" y="1" width="30" height="20" rx="3" />
+      <path d="M6 7h.01M11 7h.01M16 7h.01M21 7h.01M26 7h.01M6 12h.01M26 12h.01M9 16h14" />
     </svg>
   );
 }
@@ -116,7 +119,13 @@ type MonthGridProps = {
   onSelect: (key: string) => void;
   onFocusDay: (key: string) => void;
   dayRefs: React.MutableRefObject<Map<string, HTMLButtonElement>>;
+  nav?: "prev" | "next";
+  onNavigate?: () => void;
 };
+
+// Matches reference ._PuyutQ
+const dayCellBase =
+  "relative flex aspect-square items-center justify-center rounded-full text-[14px] leading-none";
 
 function MonthGrid({
   year,
@@ -127,27 +136,46 @@ function MonthGrid({
   onSelect,
   onFocusDay,
   dayRefs,
+  nav,
+  onNavigate,
 }: MonthGridProps) {
   const cells = buildDays(year, month);
   const label = `${MONTH_NAMES[month - 1]} ${year}`;
 
   const start = checkIn ? new Date(checkIn + "T00:00:00").getTime() : null;
   const end = checkOut ? new Date(checkOut + "T00:00:00").getTime() : null;
+  const rangeComplete = start !== null && end !== null;
 
   return (
     <div className="min-w-0 flex-1">
-      <h3 className="mb-4 text-center text-[16px] font-medium text-[var(--fg)]">
-        {label}
-      </h3>
-      <div
-        role="grid"
-        aria-label={label}
-        className="grid grid-cols-7"
-      >
+      <div className="relative mb-4 flex h-8 items-center justify-center">
+        {nav === "prev" ? (
+          <button
+            type="button"
+            aria-label="Previous month"
+            onClick={onNavigate}
+            className={`absolute left-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[var(--fg)] transition-colors hover:bg-[var(--bg-subtle)] ${dayFocusClass}`}
+          >
+            <Icon name="chev-left" className="h-3.5 w-3.5" />
+          </button>
+        ) : null}
+        {nav === "next" ? (
+          <button
+            type="button"
+            aria-label="Next month"
+            onClick={onNavigate}
+            className={`absolute right-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[var(--fg)] transition-colors hover:bg-[var(--bg-subtle)] ${dayFocusClass}`}
+          >
+            <Icon name="chev-right" className="h-3.5 w-3.5" />
+          </button>
+        ) : null}
+        <h3 className="text-[16px] font-medium text-[var(--fg)]">{label}</h3>
+      </div>
+
+      <div className="grid grid-cols-7" aria-hidden>
         {WEEKDAYS.map((weekday, index) => (
           <div
             key={`${weekday}-${index}`}
-            role="columnheader"
             className="flex h-10 items-center justify-center text-[12px] font-semibold text-[var(--fg)]"
           >
             <abbr title={WEEKDAY_LABELS[index]} className="no-underline">
@@ -155,13 +183,20 @@ function MonthGrid({
             </abbr>
           </div>
         ))}
+      </div>
+
+      <div
+        role="grid"
+        aria-label={label}
+        className="grid grid-cols-7"
+      >
         {cells.map((day, index) => {
           if (day === null) {
             return (
               <div
                 key={`blank-${index}`}
                 role="gridcell"
-                className="h-12"
+                className={dayCellBase}
                 aria-hidden
               />
             );
@@ -173,68 +208,74 @@ function MonthGrid({
           const isStart = checkIn === key;
           const isEnd = checkOut === key;
           const inMiddle =
-            start !== null &&
-            end !== null &&
-            time > start &&
-            time < end;
+            rangeComplete && time > start! && time < end!;
           const selected = isStart || isEnd || inMiddle;
           const isFocused = focusKey === key;
+          const isEndpoint = isStart || isEnd;
 
           return (
-            <div
+            <button
               key={key}
-              role="gridcell"
-              className="relative flex h-12 items-center justify-center"
+              ref={(el) => {
+                if (el) dayRefs.current.set(key, el);
+                else dayRefs.current.delete(key);
+              }}
+              type="button"
+              tabIndex={isFocused ? 0 : -1}
+              disabled={unavailable}
+              aria-label={`${WEEKDAY_LABELS[new Date(year, month - 1, day).getDay()]}, ${MONTH_NAMES[month - 1]} ${day}, ${year}${
+                unavailable ? ", unavailable" : ""
+              }${isStart ? ", check-in" : ""}${isEnd ? ", checkout" : ""}`}
+              aria-selected={selected || undefined}
+              aria-disabled={unavailable || undefined}
+              onClick={() => onSelect(key)}
+              onFocus={() => onFocusDay(key)}
+              className={[
+                dayCellBase,
+                dayFocusClass,
+                unavailable
+                  ? "cursor-default text-[var(--border-strong)] line-through"
+                  : isEndpoint
+                    ? "text-white"
+                    : "text-[var(--fg)]",
+              ]
+                .filter(Boolean)
+                .join(" ")}
             >
-              {inMiddle ? (
+              {/* Continuous range bar. One full-height fill layer per in-range
+                 cell, all identical height/z so they abut into a single bar:
+                 start fills its right half, end fills its left half, middle
+                 fills fully. Endpoint circles are drawn on top. */}
+              {rangeComplete && (isStart || isEnd || inMiddle) ? (
                 <span
                   aria-hidden
-                  className="absolute inset-y-0 inset-x-0 bg-[var(--bg-subtle)]"
+                  className={[
+                    "pointer-events-none absolute top-1/2 h-9 -translate-y-1/2 z-0 bg-[var(--bg-subtle)]",
+                    isStart ? "left-1/2 right-0" : "",
+                    isEnd ? "left-0 right-1/2" : "",
+                    inMiddle ? "inset-x-0" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
                 />
               ) : null}
-              {isStart && end !== null ? (
+              {isEndpoint ? (
                 <span
                   aria-hidden
-                  className="absolute inset-y-0 right-0 w-1/2 bg-[var(--bg-subtle)]"
+                  className="pointer-events-none absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 z-[1] rounded-full bg-[var(--fg)]"
                 />
               ) : null}
-              {isEnd && start !== null ? (
-                <span
-                  aria-hidden
-                  className="absolute inset-y-0 left-0 w-1/2 bg-[var(--bg-subtle)]"
-                />
-              ) : null}
-              <button
-                ref={(el) => {
-                  if (el) dayRefs.current.set(key, el);
-                  else dayRefs.current.delete(key);
-                }}
-                type="button"
-                tabIndex={isFocused ? 0 : -1}
-                disabled={unavailable}
-                aria-label={`${WEEKDAY_LABELS[new Date(year, month - 1, day).getDay()]}, ${MONTH_NAMES[month - 1]} ${day}, ${year}${
-                  unavailable ? ", unavailable" : ""
-                }${isStart ? ", check-in" : ""}${isEnd ? ", checkout" : ""}`}
-                aria-selected={selected || undefined}
-                aria-disabled={unavailable || undefined}
-                onClick={() => onSelect(key)}
-                onFocus={() => onFocusDay(key)}
+              <span
                 className={[
-                  "relative z-10 flex h-12 w-12 items-center justify-center rounded-full text-[14px] transition-colors",
-                  dayFocusClass,
-                  unavailable
-                    ? "cursor-default text-[var(--border-strong)]"
-                    : "text-[var(--fg)] hover:border hover:border-[var(--fg)]",
-                  isStart || isEnd
-                    ? "bg-[var(--fg)] font-semibold text-white hover:border-transparent"
-                    : "",
+                  "relative z-[2]",
+                  isEndpoint ? "font-semibold text-white" : "",
                 ]
                   .filter(Boolean)
                   .join(" ")}
               >
                 {day}
-              </button>
-            </div>
+              </span>
+            </button>
           );
         })}
       </div>
@@ -248,7 +289,7 @@ export default function Calendar() {
   const [checkIn, setCheckIn] = useState<string | null>(stay.checkIn);
   const [checkOut, setCheckOut] = useState<string | null>(stay.checkOut);
   const [selecting, setSelecting] = useState<"in" | "out">("in");
-  const [keyboardMode, setKeyboardMode] = useState(false);
+  const [keyboardMode] = useState(false);
   const dayRefs = useRef(new Map<string, HTMLButtonElement>());
 
   const base = stay.months[0];
@@ -382,7 +423,7 @@ export default function Calendar() {
   return (
     <section
       id="availability"
-      className="scroll-mt-24 border-b border-[var(--border)] py-12"
+      className="scroll-mt-24 py-8"
       aria-labelledby="calendar-heading"
     >
       <h2
@@ -433,47 +474,30 @@ export default function Calendar() {
           onKeyDown={onGridKeyDown}
         >
           <div className="flex items-start gap-10">
-            <div className="relative min-w-0 flex-1 pl-10">
-              <button
-                type="button"
-                aria-label="Previous month"
-                onClick={() => setMonthOffset((o) => o - 1)}
-                className={`absolute left-0 top-0 z-10 flex h-8 w-8 items-center justify-center rounded-full text-[var(--fg)] transition-colors hover:bg-[var(--bg-subtle)] ${dayFocusClass}`}
-              >
-                <Icon name="chev-left" className="h-3.5 w-3.5" />
-              </button>
-              <MonthGrid
-                year={left.year}
-                month={left.month}
-                checkIn={checkIn}
-                checkOut={checkOut}
-                focusKey={focusKey}
-                onSelect={onSelect}
-                onFocusDay={setFocusKey}
-                dayRefs={dayRefs}
-              />
-            </div>
-
-            <div className="relative min-w-0 flex-1 pr-10">
-              <button
-                type="button"
-                aria-label="Next month"
-                onClick={() => setMonthOffset((o) => o + 1)}
-                className={`absolute right-0 top-0 z-10 flex h-8 w-8 items-center justify-center rounded-full text-[var(--fg)] transition-colors hover:bg-[var(--bg-subtle)] ${dayFocusClass}`}
-              >
-                <Icon name="chev-right" className="h-3.5 w-3.5" />
-              </button>
-              <MonthGrid
-                year={right.year}
-                month={right.month}
-                checkIn={checkIn}
-                checkOut={checkOut}
-                focusKey={focusKey}
-                onSelect={onSelect}
-                onFocusDay={setFocusKey}
-                dayRefs={dayRefs}
-              />
-            </div>
+            <MonthGrid
+              year={left.year}
+              month={left.month}
+              checkIn={checkIn}
+              checkOut={checkOut}
+              focusKey={focusKey}
+              onSelect={onSelect}
+              onFocusDay={setFocusKey}
+              dayRefs={dayRefs}
+              nav="prev"
+              onNavigate={() => setMonthOffset((o) => o - 1)}
+            />
+            <MonthGrid
+              year={right.year}
+              month={right.month}
+              checkIn={checkIn}
+              checkOut={checkOut}
+              focusKey={focusKey}
+              onSelect={onSelect}
+              onFocusDay={setFocusKey}
+              dayRefs={dayRefs}
+              nav="next"
+              onNavigate={() => setMonthOffset((o) => o + 1)}
+            />
           </div>
         </div>
       )}
@@ -481,13 +505,7 @@ export default function Calendar() {
       <div className="mt-6 flex items-center justify-between">
         <button
           type="button"
-          aria-label={
-            keyboardMode
-              ? "Switch to calendar view"
-              : "Switch to keyboard date entry"
-          }
-          aria-pressed={keyboardMode}
-          onClick={() => setKeyboardMode((v) => !v)}
+          aria-label="Keyboard date entry"
           className={`flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border-strong)] text-[var(--fg)] transition-colors hover:bg-[var(--bg-subtle)] ${dayFocusClass}`}
         >
           <KeyboardIcon />
@@ -497,7 +515,7 @@ export default function Calendar() {
           type="button"
           onClick={clearDates}
           disabled={!checkIn && !checkOut}
-          className={`rounded-full border border-[var(--fg)] px-4 py-2 text-[14px] font-medium text-[var(--fg)] transition-colors hover:bg-[var(--bg-subtle)] disabled:cursor-default disabled:opacity-40 ${dayFocusClass}`}
+          className={`text-[14px] font-medium text-[var(--fg)] underline disabled:cursor-default disabled:opacity-40 ${dayFocusClass}`}
         >
           Clear dates
         </button>

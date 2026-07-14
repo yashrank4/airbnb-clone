@@ -96,7 +96,7 @@ type IconProps = Omit<SVGProps<SVGSVGElement>, "viewBox"> & {
 // icons default to fill:currentColor; stroked icons (share, heart, chevrons)
 // default to fill:none + stroke:currentColor. Consumers size via className
 // and can override paint via style/props (e.g. a filled heart when saved).
-export default function Icon({ name, ...props }: IconProps) {
+export default function Icon({ name, style, ...props }: IconProps) {
   const def = ICONS[name];
   const paint: CSSProperties = def.stroked
     ? { fill: "none", stroke: "currentColor", strokeWidth: def.strokeWidth ?? 2 }
@@ -106,8 +106,8 @@ export default function Icon({ name, ...props }: IconProps) {
       viewBox={def.viewBox}
       aria-hidden={props["aria-label"] ? undefined : true}
       focusable="false"
-      style={{ display: "block", ...paint, ...props.style }}
       {...props}
+      style={{ display: "block", ...paint, ...style }}
     >
       {def.inner}
     </svg>

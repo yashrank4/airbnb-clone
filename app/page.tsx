@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import BookingCard from "@/components/BookingCard";
 import Overview from "@/components/Overview";
 import PhotoGrid from "@/components/PhotoGrid";
@@ -16,6 +16,10 @@ import MoreStaysNearby from "@/components/MoreStaysNearby";
 import PhotoTour from "@/components/PhotoTour";
 import { listing } from "@/data/loadListing";
 
+function isPhotosModalUrl() {
+  return new URLSearchParams(window.location.search).get("modal") === "photos";
+}
+
 export default function Home() {
   const [tourOpen, setTourOpen] = useState(false);
   // Section to land on when opening from a hero tile; null = start of tour.
@@ -23,13 +27,49 @@ export default function Home() {
   // Remember the element that opened the tour so focus returns there on close.
   const triggerRef = useRef<HTMLElement | null>(null);
 
+  // Keep photo-tour open state in sync with ?modal=photos for back/forward.
+  useEffect(() => {
+    if (isPhotosModalUrl()) setTourOpen(true);
+
+    const onPopState = () => {
+      const shouldOpen = isPhotosModalUrl();
+      setTourOpen((wasOpen) => {
+        if (wasOpen && !shouldOpen) {
+          queueMicrotask(() => triggerRef.current?.focus());
+        }
+        return shouldOpen;
+      });
+      if (!shouldOpen) setTourSection(null);
+    };
+
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
   const handleOpenPhotoTour = useCallback((section?: string) => {
     triggerRef.current = document.activeElement as HTMLElement | null;
     setTourSection(section ?? null);
     setTourOpen(true);
+
+    if (!isPhotosModalUrl()) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("modal", "photos");
+      window.history.pushState({ modal: "photos" }, "", url);
+    }
   }, []);
 
   const handleClosePhotoTour = useCallback(() => {
+    if (isPhotosModalUrl()) {
+      // popstate handler finishes open→closed + focus restore
+      if (window.history.state?.modal === "photos") {
+        window.history.back();
+        return;
+      }
+      // Deep-linked open (?modal=photos on load): strip param in place
+      const url = new URL(window.location.href);
+      url.searchParams.delete("modal");
+      window.history.replaceState(window.history.state, "", url);
+    }
     setTourOpen(false);
     setTourSection(null);
     triggerRef.current?.focus();
@@ -66,7 +106,7 @@ export default function Home() {
       {/* Two-column body — reference grid (from devtools):
           grid-template-columns: minmax(0, 1fr) 372px; gap: 0 96px.
           Left = scrollable content sections; right = sticky booking rail. */}
-      <div className="mt-12 grid grid-cols-[minmax(0,1fr)_372px] items-start gap-x-24">
+      <div className="mt-12 grid grid-cols-[minmax(0,1fr)_372px] items-start gap-x-24 border-b border-[var(--border)]">
         <div>
           <Overview />
           <WhereYoullSleep />

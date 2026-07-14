@@ -34,7 +34,7 @@ export default function Amenities() {
   return (
     <section
       id="amenities"
-      className="scroll-mt-24 border-b border-[var(--border)] py-12"
+      className="scroll-mt-24 border-b border-[var(--border)] py-8"
     >
       <h2 className="text-[22px] font-medium leading-[26px] text-[var(--fg)]">
         What this place offers
@@ -81,7 +81,7 @@ export default function Amenities() {
         ref={triggerRef}
         type="button"
         onClick={() => setModalOpen(true)}
-        className="mt-8 rounded-lg border border-[var(--fg)] px-6 py-3.5 text-[16px] font-medium text-[var(--fg)] transition-colors hover:bg-[var(--bg-subtle)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--fg)]"
+        className="mt-8 rounded-[12px] border border-[var(--fg)] bg-white px-[23px] py-[13px] text-[16px] font-medium text-[var(--fg)] transition-[background,transform] duration-150 ease-out hover:bg-[var(--bg-subtle)] active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fg)] focus-visible:ring-offset-2"
       >
         Show all {amenitiesTotal} amenities
       </button>

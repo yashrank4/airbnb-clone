@@ -17,16 +17,12 @@ const SECTIONS = [
 ] as const;
 
 function ReserveButton({ tabIndex }: { tabIndex: number }) {
-  const [hovered, setHovered] = useState(false);
-
   return (
     <button
       type="button"
       tabIndex={tabIndex}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="h-11 shrink-0 rounded-full px-6 text-[15px] font-semibold text-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--fg)]"
-      style={{ background: hovered ? "var(--reserve-hover)" : "var(--reserve)" }}
+      className="h-10 shrink-0 rounded-full border-none px-5 text-[14px] font-medium text-white transition-[filter,transform] duration-150 ease-out hover:brightness-95 active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--fg)]"
+      style={{ background: "var(--reserve)" }}
     >
       Reserve
     </button>
@@ -146,13 +142,13 @@ export default function SubNav() {
         </ul>
 
         {/* Right — price / rating / reserve */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-5">
           <div className="text-right leading-tight">
             <p>
-              <span className="text-[16px] font-bold text-[var(--fg)]">
+              <span className="text-[15px] font-medium text-[var(--fg)]">
                 {price.raw}
               </span>{" "}
-              <span className="text-[14px] font-normal text-[var(--fg-secondary)]">
+              <span className="text-[13px] font-normal text-[var(--ink)]">
                 for {price.nights} nights
               </span>
             </p>

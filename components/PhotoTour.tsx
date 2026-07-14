@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import Icon from "@/components/Icon";
-import { listing } from "@/data/loadListing";
+import { flatPhotos, listing } from "@/data/loadListing";
 import { useModalShell } from "@/hooks/useModalShell";
 import Lightbox from "@/components/Lightbox";
 
@@ -14,6 +14,26 @@ type PhotoTourProps = {
   // When set, land on this photo-section name after open (hero tile clicks).
   initialSection?: string | null;
 };
+
+type HistoryPhotosState = {
+  modal?: string;
+  view?: "lightbox" | "grid";
+  photo?: number;
+};
+
+function readPhotoIndexFromUrl(): number | null {
+  const raw = new URLSearchParams(window.location.search).get("photo");
+  if (raw === null) return null;
+  const idx = Number(raw);
+  if (!Number.isInteger(idx) || idx < 0 || idx >= flatPhotos.length) return null;
+  return idx;
+}
+
+function photosHistoryState(): HistoryPhotosState | null {
+  const state = window.history.state;
+  if (state && typeof state === "object") return state as HistoryPhotosState;
+  return null;
+}
 
 type PhotoRow =
   | { type: "full"; urls: [string] }
@@ -80,15 +100,6 @@ export default function PhotoTour({
   useEffect(() => {
     if (!open) return;
     backRef.current?.focus();
-    const url = new URL(window.location.href);
-    url.searchParams.set("modal", "photos");
-    window.history.replaceState(window.history.state, "", url);
-
-    return () => {
-      const cleanUrl = new URL(window.location.href);
-      cleanUrl.searchParams.delete("modal");
-      window.history.replaceState(window.history.state, "", cleanUrl);
-    };
   }, [open]);
 
   // Land on the hero-clicked section (instant) once the feed mounts.
@@ -153,17 +164,85 @@ export default function PhotoTour({
   }, []);
 
   const openLightbox = useCallback((globalIndex: number) => {
-    savedScroll.current = feedRef.current?.scrollTop ?? 0;
+    if (lightboxIndex === null) {
+      savedScroll.current = feedRef.current?.scrollTop ?? 0;
+    }
     setLightboxIndex(globalIndex);
-  }, []);
 
-  const returnToGrid = useCallback(() => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("modal", "photos");
+    url.searchParams.set("photo", String(globalIndex));
+    const nextState: HistoryPhotosState = {
+      modal: "photos",
+      view: "lightbox",
+      photo: globalIndex,
+    };
+
+    if (photosHistoryState()?.view === "lightbox") {
+      window.history.replaceState(nextState, "", url);
+    } else {
+      window.history.pushState(nextState, "", url);
+    }
+  }, [lightboxIndex]);
+
+  const restoreGrid = useCallback(() => {
     setLightboxIndex(null);
     requestAnimationFrame(() => {
       if (feedRef.current) feedRef.current.scrollTop = savedScroll.current;
       backRef.current?.focus();
     });
   }, []);
+
+  const returnToGrid = useCallback(() => {
+    if (photosHistoryState()?.view === "lightbox") {
+      window.history.back();
+      return;
+    }
+    const url = new URL(window.location.href);
+    url.searchParams.delete("photo");
+    window.history.replaceState({ modal: "photos", view: "grid" }, "", url);
+    restoreGrid();
+  }, [restoreGrid]);
+
+  const handleLightboxIndexChange = useCallback((next: number) => {
+    setLightboxIndex(next);
+    const url = new URL(window.location.href);
+    url.searchParams.set("modal", "photos");
+    url.searchParams.set("photo", String(next));
+    window.history.replaceState(
+      { modal: "photos", view: "lightbox", photo: next },
+      "",
+      url,
+    );
+  }, []);
+
+  // Sync lightbox ↔ ?photo= for browser back/forward.
+  useEffect(() => {
+    if (!open) return;
+
+    const applyFromUrl = () => {
+      const idx = readPhotoIndexFromUrl();
+      if (idx === null) {
+        setLightboxIndex((prev) => {
+          if (prev !== null) {
+            requestAnimationFrame(() => {
+              if (feedRef.current) {
+                feedRef.current.scrollTop = savedScroll.current;
+              }
+              backRef.current?.focus();
+            });
+          }
+          return null;
+        });
+        return;
+      }
+      setLightboxIndex(idx);
+    };
+
+    applyFromUrl();
+    window.addEventListener("popstate", applyFromUrl);
+    return () => window.removeEventListener("popstate", applyFromUrl);
+  }, [open]);
 
   // Drop lightbox state when the tour closes so it doesn't linger during exit.
   useEffect(() => {
@@ -340,7 +419,7 @@ export default function PhotoTour({
 
       <Lightbox
         index={lightboxIndex}
-        onIndexChange={setLightboxIndex}
+        onIndexChange={handleLightboxIndexChange}
         onReturnToGrid={returnToGrid}
       />
     </>

@@ -72,11 +72,24 @@ export default function HostSection() {
                 />
                 {host.superhost ? (
                   <span
-                    className="absolute right-0 bottom-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-[var(--rausch)] text-white"
+                    className="absolute right-0 bottom-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-white text-[var(--rausch)]"
                     aria-label="Superhost"
                     role="img"
                   >
-                    <Icon name="check-circle" className="h-[15px] w-[15px]" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 32 32"
+                      aria-hidden="true"
+                      role="presentation"
+                      focusable="false"
+                      className="h-full w-full rounded-full"
+                      style={{ display: "block", fill: "currentColor" }}
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16 1a15 15 0 1 1 0 30 15 15 0 0 1 0-30zm7 9.59L24.41 12 13.5 22.91 7.59 17 9 15.59l4.5 4.5z"
+                      />
+                    </svg>
                   </span>
                 ) : null}
               </div>

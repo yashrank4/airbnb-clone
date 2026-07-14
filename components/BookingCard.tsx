@@ -26,6 +26,23 @@ function TagIcon() {
   );
 }
 
+function FlagIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      aria-hidden="true"
+      role="presentation"
+      focusable="false"
+      className="shrink-0"
+      style={{ display: "block", fill: "currentColor" }}
+    >
+      <path d="m7.5011 1c.5272 0 .9591.40794.99725.92537l.00275.07463v1h5.5c.31265 0 .5435.281645.4935.581075l-.01275.056285-.96125 3.36264.96125 3.36265c.08055.2818-.0967.5625-.36775.62465l-.0554.00945-.0576.00325h-5.5c-.5272 0-.9591-.40795-.99725-.92535l-.00275-.07465v-1h-5v6h-1v-14zm1 3h-1v4h1z" />
+    </svg>
+  );
+}
+
 function ChevronDownIcon() {
   return (
     <svg
@@ -142,9 +159,9 @@ export default function BookingCard() {
         </div>
 
         {/* Free cancellation strip */}
-        <div className="mt-4 rounded-lg bg-[var(--bg-subtle)] px-4 py-3 text-center text-[14px] text-[var(--fg-secondary)]">
+        <div className="my-4 rounded-lg bg-[var(--bg-subtle)] p-2 text-center text-[13px] text-[var(--fg-secondary)]">
           Free cancellation before{" "}
-          <span className="font-semibold text-[var(--fg)]">
+          <span className="font-medium text-[var(--fg)]">
             {CANCELLATION_DATE}
           </span>
         </div>
@@ -152,7 +169,7 @@ export default function BookingCard() {
         {/* Reserve CTA */}
         <button
           type="button"
-          className="mt-4 h-12 w-full rounded-full text-[16px] font-semibold text-white transition-[filter] duration-150 hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--rausch-dark)] active:scale-[0.985]"
+          className=" h-12 w-full rounded-full text-[16px] font-semibold text-white transition-[filter] duration-150 hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--rausch-dark)] active:scale-[0.985]"
           style={{ background: "var(--reserve)" }}
         >
           Reserve
@@ -162,6 +179,17 @@ export default function BookingCard() {
         <p className="mt-4 text-center text-[14px] font-normal text-[var(--fg-secondary)]">
           You won&apos;t be charged yet
         </p>
+      </div>
+
+      {/* Report this listing — sits below the card */}
+      <div className="mt-6 flex justify-center">
+        <a
+          href="#report"
+          className="group inline-flex items-center gap-2 rounded text-[14px] font-normal text-[var(--fg-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--fg)]"
+        >
+          <FlagIcon />
+          <span className="underline underline-offset-2">Report this listing</span>
+        </a>
       </div>
     </div>
   );
